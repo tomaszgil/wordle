@@ -6,6 +6,7 @@ const { getSession, commitSession, destroySession } =
       name: "__session",
       httpOnly: true,
       sameSite: "lax",
+      path: "/play",
       secrets: ["s3cret1"],
       secure: true,
     },
