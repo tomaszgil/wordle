@@ -1,4 +1,5 @@
-import { json, redirect, useActionData, useLoaderData } from "remix";
+import React from "react";
+import { json, Outlet, redirect, useLoaderData, Form } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import type { ResolvedWordGuess, ResolvedWordGuesses } from "~/types";
 import { Tile } from "~/components/Tile";
@@ -10,17 +11,9 @@ const word = "point";
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
 
-  if (!session.has("status")) {
-    session.set("status", "play");
-    session.set("guesses", []);
-    session.set("word", "");
-  }
-
   return json(
     {
-      guesses: session.get("guesses"),
-      status: session.get("status"),
-      word: session.get("word"),
+      guesses: session.get("guesses") ?? [],
     },
     {
       headers: {
@@ -74,16 +67,22 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  const previousGuesses = session.get("guesses");
+  const previousGuesses = session.get("guesses") ?? [];
+  session.set("guesses", [...previousGuesses, result]);
 
   if (result.every(({ status }) => status === "match")) {
-    session.set("status", "win");
+    return redirect("/play/win", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
   } else if (previousGuesses.length === 4) {
-    session.set("status", "loss");
-    session.set("word", word);
+    return redirect("/play/loss", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
   }
-
-  session.set("guesses", [...previousGuesses, result]);
 
   return redirect("/play", {
     headers: {
@@ -99,32 +98,51 @@ export default function Play() {
   }>();
   const resolvedGuesses = data?.guesses?.flat() ?? [];
 
-  console.log(data);
+  const [input, setInput] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <div>
       <h1>Play</h1>
-      <form method="post">
-        <label>
-          Guess: <input type="text" name="word" />
-        </label>
-        <button type="submit">Try</button>
-      </form>
-      <div className="flex justify-center">
-        {data?.status}
+      <Form reloadDocument method="post">
+        <fieldset disabled={["win", "loss"].includes(data?.status)}>
+          <label>
+            Guess:{" "}
+            <input
+              ref={inputRef}
+              type="text"
+              name="word"
+              value={input}
+              maxLength={5}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </label>
+        </fieldset>
+      </Form>
+      <div className="flex justify-center mb-4">
         <Grid>
           {resolvedGuesses.map(({ letter, status }, index) => (
             <Tile key={index} status={status}>
               {letter.toUpperCase()}
             </Tile>
           ))}
-          {new Array(25 - resolvedGuesses.length)
-            .fill(" ")
+          {input.split("").map((letter) => (
+            <Tile key={letter}>{letter.toUpperCase()}</Tile>
+          ))}
+          {new Array(25 - input.length - resolvedGuesses.length)
+            .fill("")
             .map((child, index) => (
               <Tile key={index}>&nbsp;</Tile>
             ))}
         </Grid>
       </div>
+      <Outlet />
     </div>
   );
 }

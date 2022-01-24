@@ -11,11 +11,12 @@ export function Tile({ children, status }: TileProps) {
   return (
     <div
       className={classNames(
-        "w-16 h-16 text-xl rounded-md shadow-lg  flex items-center justify-center",
+        "w-16 h-16 text-xl font-bold rounded-md flex items-center justify-center transition-colors ease-out",
         {
-          "bg-green-300": status === "match",
-          "bg-yellow-300": status === "include",
-          "bg-gray-300": status === "miss",
+          "bg-green-400": status === "match",
+          "bg-yellow-400": status === "include",
+          "bg-gray-400": status === "miss",
+          "bg-gray-100": !status,
         }
       )}
     >
