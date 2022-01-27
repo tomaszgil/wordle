@@ -5,16 +5,25 @@ import type { ResolvedWordGuess, ResolvedWordGuesses } from "~/types";
 import { Tile } from "~/components/Tile";
 import { Grid } from "~/components/Grid";
 import { getSession, commitSession } from "~/sessions";
-
-const word = "misio";
+import { getRandomWord, inWordList } from "~/words";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
 
+  if (!session.has("word")) {
+    session.set("word", getRandomWord());
+  }
+  if (!session.has("guesses")) {
+    session.set("guesses", []);
+  }
+  if (!session.has("status")) {
+    session.set("status", "play");
+  }
+
   return json(
     {
-      guesses: session.get("guesses") ?? [],
-      status: session.get("status") ?? "play",
+      guesses: session.get("guesses"),
+      status: session.get("status"),
     },
     {
       headers: {
@@ -52,7 +61,19 @@ export const action: ActionFunction = async ({ request }) => {
       }
     );
   }
+  if (!inWordList(guess)) {
+    return json(
+      { message: "Guess is not in word list" },
+      {
+        status: 400,
+        headers: {
+          "Set-Cookie": await commitSession(session),
+        },
+      }
+    );
+  }
 
+  const word = session.get("word");
   const result: ResolvedWordGuess = [];
 
   for (let i = 0; i < guess.length; i++) {
@@ -78,7 +99,7 @@ export const action: ActionFunction = async ({ request }) => {
         "Set-Cookie": await commitSession(session),
       },
     });
-  } else if (previousGuesses.length === 4) {
+  } else if (previousGuesses.length === 5) {
     session.set("status", "loss");
     return redirect("/play/loss", {
       headers: {
@@ -112,7 +133,6 @@ export default function Play() {
 
   return (
     <div>
-      <h1>Play</h1>
       <Form
         reloadDocument
         method="post"
@@ -133,12 +153,12 @@ export default function Play() {
                   inputRef.current.focus();
                 }
               }}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value.toLowerCase())}
             />
           </label>
         </fieldset>
       </Form>
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center m-8">
         <Grid>
           {resolvedGuesses.map(({ letter, status }, index) => (
             <Tile key={`${index}-${letter}`} status={status}>
@@ -148,7 +168,7 @@ export default function Play() {
           {input.split("").map((letter, index) => (
             <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
           ))}
-          {new Array(25 - input.length - resolvedGuesses.length)
+          {new Array(30 - input.length - resolvedGuesses.length)
             .fill("")
             .map((child, index) => (
               <Tile key={index}>&nbsp;</Tile>
