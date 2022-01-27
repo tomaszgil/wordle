@@ -6,7 +6,7 @@ import { Tile } from "~/components/Tile";
 import { Grid } from "~/components/Grid";
 import { getSession, commitSession } from "~/sessions";
 
-const word = "point";
+const word = "misio";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -14,6 +14,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json(
     {
       guesses: session.get("guesses") ?? [],
+      status: session.get("status") ?? "play",
     },
     {
       headers: {
@@ -71,12 +72,14 @@ export const action: ActionFunction = async ({ request }) => {
   session.set("guesses", [...previousGuesses, result]);
 
   if (result.every(({ status }) => status === "match")) {
+    session.set("status", "win");
     return redirect("/play/win", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
     });
   } else if (previousGuesses.length === 4) {
+    session.set("status", "loss");
     return redirect("/play/loss", {
       headers: {
         "Set-Cookie": await commitSession(session),
@@ -110,7 +113,12 @@ export default function Play() {
   return (
     <div>
       <h1>Play</h1>
-      <Form reloadDocument method="post">
+      <Form
+        reloadDocument
+        method="post"
+        autoComplete="off"
+        className="h-0 overflow-hidden"
+      >
         <fieldset disabled={["win", "loss"].includes(data?.status)}>
           <label>
             Guess:{" "}
@@ -120,6 +128,11 @@ export default function Play() {
               name="word"
               value={input}
               maxLength={5}
+              onBlur={() => {
+                if (inputRef.current) {
+                  inputRef.current.focus();
+                }
+              }}
               onChange={(e) => setInput(e.target.value)}
             />
           </label>
@@ -128,12 +141,12 @@ export default function Play() {
       <div className="flex justify-center mb-4">
         <Grid>
           {resolvedGuesses.map(({ letter, status }, index) => (
-            <Tile key={index} status={status}>
+            <Tile key={`${index}-${letter}`} status={status}>
               {letter.toUpperCase()}
             </Tile>
           ))}
-          {input.split("").map((letter) => (
-            <Tile key={letter}>{letter.toUpperCase()}</Tile>
+          {input.split("").map((letter, index) => (
+            <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
           ))}
           {new Array(25 - input.length - resolvedGuesses.length)
             .fill("")
