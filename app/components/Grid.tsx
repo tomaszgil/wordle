@@ -1,6 +1,4 @@
-import classNames from "classnames";
 import React from "react";
-import { LetterStatus } from "~/types";
 
 interface GridProps {
   children: React.ReactNode;
