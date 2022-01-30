@@ -1,5 +1,12 @@
 import React from "react";
-import { json, Outlet, redirect, useLoaderData, Form } from "remix";
+import {
+  json,
+  Outlet,
+  redirect,
+  useLoaderData,
+  Form,
+  useActionData,
+} from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import type { ResolvedWordGuess, ResolvedWordGuesses } from "~/types";
 import { Tile } from "~/components/Tile";
@@ -41,7 +48,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (typeof guess !== "string") {
     return json(
-      { message: "Guess must be of type string" },
+      { error: "Guess must be of type string" },
       {
         status: 400,
         headers: {
@@ -52,7 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (guess.length !== 5) {
     return json(
-      { message: "Guess must be of length 5" },
+      { error: "Guess must be of length 5" },
       {
         status: 400,
         headers: {
@@ -63,7 +70,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (!inWordList(guess)) {
     return json(
-      { message: "Guess is not in word list" },
+      { error: "Guess is not in word list" },
       {
         status: 400,
         headers: {
@@ -74,19 +81,26 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const word = session.get("word");
-  const result: ResolvedWordGuess = [];
+  const guessArray: (string | undefined)[] = guess.split("");
+  const result: ResolvedWordGuess = guess.split("").map((letter: string) => ({
+    letter,
+    status: "miss",
+  }));
 
-  for (let i = 0; i < guess.length; i++) {
-    const letter = guess[i];
-    result.push({
-      letter,
-      status:
-        word[i] === letter
-          ? "match"
-          : word.includes(letter)
-          ? "include"
-          : "miss",
-    });
+  // Check for matches
+  for (let i = 0; i < guessArray.length; i++) {
+    if (word[i] === guessArray[i]) {
+      result[i].status = "match";
+      guessArray[i] = undefined;
+    }
+  }
+
+  // Check for includes
+  for (let i = 0; i < guessArray.length; i++) {
+    if (word.includes(guessArray[i])) {
+      result[i].status = "include";
+      guessArray[i] = undefined;
+    }
   }
 
   const previousGuesses = session.get("guesses") ?? [];
@@ -120,6 +134,7 @@ export default function Play() {
     guesses: ResolvedWordGuesses;
     status: "play" | "win" | "loss";
   }>();
+  const actionData = useActionData();
   const resolvedGuesses = data?.guesses?.flat() ?? [];
 
   const [input, setInput] = React.useState("");
@@ -148,6 +163,7 @@ export default function Play() {
               name="word"
               value={input}
               maxLength={5}
+              required
               onBlur={() => {
                 if (inputRef.current) {
                   inputRef.current.focus();
@@ -175,6 +191,13 @@ export default function Play() {
             ))}
         </Grid>
       </div>
+      {actionData?.error && (
+        <div className="flex justify-center m-8">
+          <span className="p-4 bg-red-100 text-red-700 rounded-md">
+            {actionData.error}
+          </span>
+        </div>
+      )}
       <Outlet />
     </div>
   );
