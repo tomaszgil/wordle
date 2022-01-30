@@ -80,26 +80,26 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const word = session.get("word");
-  const guessArray: (string | undefined)[] = guess.split("");
+  const word = session.get("word").split("");
   const result: ResolvedWordGuess = guess.split("").map((letter: string) => ({
     letter,
     status: "miss",
   }));
 
   // Check for matches
-  for (let i = 0; i < guessArray.length; i++) {
-    if (word[i] === guessArray[i]) {
+  for (let i = 0; i < guess.length; i++) {
+    if (word[i] === guess[i]) {
       result[i].status = "match";
-      guessArray[i] = undefined;
+      word[i] = undefined;
     }
   }
 
   // Check for includes
-  for (let i = 0; i < guessArray.length; i++) {
-    if (word.includes(guessArray[i])) {
+  for (let i = 0; i < guess.length; i++) {
+    if (word.includes(guess[i])) {
       result[i].status = "include";
-      guessArray[i] = undefined;
+      const index = word.findIndex((l: string) => l === guess[i]);
+      word[index] = undefined;
     }
   }
 
