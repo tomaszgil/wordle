@@ -11,8 +11,11 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import type { ResolvedWordGuess, ResolvedWordGuesses } from "~/types";
 import { Tile } from "~/components/Tile";
 import { Grid } from "~/components/Grid";
-import { getSession, commitSession } from "~/sessions";
+import { getSession, commitSession, destroySession } from "~/sessions";
 import { getRandomWord, inWordList } from "~/words";
+import { DismissableAlert } from "~/components/DismissableAlert";
+import { Button } from "~/components/Button";
+import { Mark } from "~/components/Mark";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -44,7 +47,13 @@ export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
 
   const formData = await request.formData();
-  const guess = formData.get("word");
+  const { _action, word: guess } = Object.fromEntries(formData);
+
+  if (_action === "reset") {
+    return redirect("/play", {
+      headers: { "Set-Cookie": await destroySession(session) },
+    });
+  }
 
   if (typeof guess !== "string") {
     return json(
@@ -163,7 +172,6 @@ export default function Play() {
               name="word"
               value={input}
               maxLength={5}
-              required
               onBlur={() => {
                 if (inputRef.current) {
                   inputRef.current.focus();
@@ -175,29 +183,47 @@ export default function Play() {
         </fieldset>
       </Form>
       <div className="flex justify-center m-8">
-        <Grid>
-          {resolvedGuesses.map(({ letter, status }, index) => (
-            <Tile key={`${index}-${letter}`} status={status}>
-              {letter.toUpperCase()}
-            </Tile>
-          ))}
-          {input.split("").map((letter, index) => (
-            <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
-          ))}
-          {new Array(30 - input.length - resolvedGuesses.length)
-            .fill("")
-            .map((child, index) => (
-              <Tile key={index}>&nbsp;</Tile>
+        <div>
+          <div className="mb-8 flex items-center gap-4 justify-between">
+            <span>
+              Press <Mark>Enter</Mark> to submit...
+            </span>
+            <Form method="post">
+              <Button
+                type="submit"
+                variant="secondary"
+                name="_action"
+                disabled={!resolvedGuesses.length}
+                value="reset"
+              >
+                Reset
+              </Button>
+            </Form>
+          </div>
+          <Grid>
+            {resolvedGuesses.map(({ letter, status }, index) => (
+              <Tile key={`${index}-${letter}`} status={status}>
+                {letter.toUpperCase()}
+              </Tile>
             ))}
-        </Grid>
-      </div>
-      {actionData?.error && (
-        <div className="flex justify-center m-8">
-          <span className="p-4 bg-red-100 text-red-700 rounded-md">
-            {actionData.error}
-          </span>
+            {input.split("").map((letter, index) => (
+              <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
+            ))}
+            {new Array(30 - input.length - resolvedGuesses.length)
+              .fill("")
+              .map((child, index) => (
+                <Tile key={index}>&nbsp;</Tile>
+              ))}
+          </Grid>
+          {actionData?.error && (
+            <div className="mt-8">
+              <DismissableAlert status="error">
+                {actionData.error}
+              </DismissableAlert>
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <Outlet />
     </div>
   );
