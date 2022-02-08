@@ -156,12 +156,16 @@ export default function Play() {
   }, []);
 
   return (
-    <div>
+    <div className="my-8 mx-4">
       <Form
-        reloadDocument
         method="post"
         autoComplete="off"
         className="h-0 overflow-hidden"
+        onSubmit={() => {
+          if (inputRef.current) {
+            inputRef.current.value = "";
+          }
+        }}
       >
         <fieldset disabled={["win", "loss"].includes(data?.status)}>
           <label>
@@ -182,7 +186,7 @@ export default function Play() {
           </label>
         </fieldset>
       </Form>
-      <div className="flex justify-center m-8">
+      <div className="flex justify-center">
         <div>
           <div className="mb-8 flex items-center gap-4 justify-between">
             <span>
@@ -211,7 +215,7 @@ export default function Play() {
             ))}
             {new Array(30 - input.length - resolvedGuesses.length)
               .fill("")
-              .map((child, index) => (
+              .map((_, index) => (
                 <Tile key={index}>&nbsp;</Tile>
               ))}
           </Grid>
