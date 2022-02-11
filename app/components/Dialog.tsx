@@ -2,11 +2,15 @@ import React from "react";
 
 interface DialogProps {
   children: React.ReactNode;
+  onClose: () => void;
 }
 
-export function Dialog({ children }: DialogProps) {
+export function Dialog({ children, onClose }: DialogProps) {
   return (
-    <div className="absolute top-0 left-0 h-screen w-screen bg-black/80 w-100 h-100 flex justify-center items-start">
+    <div
+      className="absolute top-0 left-0 h-screen w-screen bg-black/80 w-100 h-100 flex justify-center items-start"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         className="mx-auto my-12 p-12 rounded-md bg-white inline-block"

@@ -11,7 +11,7 @@ export function Tile({ children, status }: TileProps) {
   return (
     <div
       className={classNames(
-        "w-16 h-16 text-xl font-bold rounded-md flex items-center justify-center transition-colors ease-out",
+        "w-16 h-16 text-xl font-bold rounded-md flex items-center justify-center transition-colors delay-300 ease-out",
         {
           "bg-green-400": status === "match",
           "bg-yellow-400": status === "include",
