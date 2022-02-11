@@ -1,13 +1,24 @@
 import React from "react";
-import { json, LoaderFunction, redirect, useLoaderData } from "remix";
+import {
+  json,
+  LoaderFunction,
+  redirect,
+  useLoaderData,
+  useNavigate,
+} from "remix";
 import type { ActionFunction } from "remix";
-import { getSession, destroySession, commitSession } from "~/sessions";
+import {
+  getSession,
+  destroySession,
+  commitSession,
+  requireSessionStatus,
+} from "~/sessions";
 import { Dialog } from "~/components/Dialog";
 import { Button } from "~/components/Button";
 import { Mark } from "~/components/Mark";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get("Cookie"));
+  const session = await requireSessionStatus(request, "win");
 
   return json(
     {
@@ -31,9 +42,10 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Win() {
   const { word } = useLoaderData<{ word: string }>();
+  const navigate = useNavigate();
 
   return (
-    <Dialog>
+    <Dialog onClose={() => navigate("/play")}>
       <div className="text-center">
         <div className="text-8xl mb-4">🎉</div>
         <h2 className="text-3xl mb-4 font-semibold">Congratulations!</h2>

@@ -8,7 +8,11 @@ import {
   useActionData,
 } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
-import type { ResolvedWordGuess, ResolvedWordGuesses } from "~/types";
+import type {
+  GameStatus,
+  ResolvedWordGuess,
+  ResolvedWordGuesses,
+} from "~/types";
 import { Tile } from "~/components/Tile";
 import { Grid } from "~/components/Grid";
 import { getSession, commitSession, destroySession } from "~/sessions";
@@ -141,7 +145,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Play() {
   const data = useLoaderData<{
     guesses: ResolvedWordGuesses;
-    status: "play" | "win" | "loss";
+    status: GameStatus;
   }>();
   const actionData = useActionData();
   const resolvedGuesses = data?.guesses?.flat() ?? [];
@@ -155,7 +159,7 @@ export default function Play() {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  });
 
   React.useEffect(() => {
     if (inputRef.current) {
