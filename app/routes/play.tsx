@@ -149,11 +149,19 @@ export default function Play() {
   const [input, setInput] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
+  const status = actionData?.error ? "error" : "idle";
+
   React.useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
+
+  React.useEffect(() => {
+    if (inputRef.current) {
+      setInput("");
+    }
+  }, [data?.guesses.length]);
 
   return (
     <div className="my-8 mx-4">
@@ -161,15 +169,15 @@ export default function Play() {
         method="post"
         autoComplete="off"
         className="h-0 overflow-hidden"
-        onSubmit={() => {
-          if (inputRef.current) {
-            inputRef.current.value = "";
+        onSubmit={(e) => {
+          if (inputRef.current?.value.length === 0) {
+            e.preventDefault();
           }
         }}
       >
         <fieldset disabled={["win", "loss"].includes(data?.status)}>
           <label>
-            Guess:{" "}
+            Guess:
             <input
               ref={inputRef}
               type="text"
@@ -213,13 +221,13 @@ export default function Play() {
             {input.split("").map((letter, index) => (
               <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
             ))}
-            {new Array(30 - input.length - resolvedGuesses.length)
+            {new Array(Math.max(0, 30 - input.length - resolvedGuesses.length))
               .fill("")
               .map((_, index) => (
                 <Tile key={index}>&nbsp;</Tile>
               ))}
           </Grid>
-          {actionData?.error && (
+          {status === "error" && (
             <div className="mt-8">
               <DismissableAlert status="error">
                 {actionData.error}
