@@ -236,8 +236,10 @@ export default function Play() {
             </Form>
           </div>
           <Grid>
-            {gridItems.map(({ letter, status }) => (
-              <Tile status={status}>{letter.toUpperCase()}</Tile>
+            {gridItems.map(({ letter, status }, index) => (
+              <Tile key={index} status={status} delay={(index % 5) * 100}>
+                {letter.toUpperCase()}
+              </Tile>
             ))}
           </Grid>
           {status === "error" && (
