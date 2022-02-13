@@ -11,6 +11,7 @@ import {
 import type { ActionFunction, LoaderFunction } from "remix";
 import type {
   GameStatus,
+  LetterGuess,
   ResolvedWordGuess,
   ResolvedWordGuesses,
 } from "~/types";
@@ -173,6 +174,14 @@ export default function Play() {
     }
   }, [data?.guesses.length]);
 
+  const gridItems: LetterGuess[] = [
+    ...resolvedGuesses,
+    ...input.split("").map((letter) => ({ letter })),
+    ...new Array(Math.max(0, 30 - input.length - resolvedGuesses.length))
+      .fill("\xa0") // &nbsp;
+      .map((letter) => ({ letter })),
+  ];
+
   return (
     <main className="my-8 mx-4">
       <Form
@@ -227,19 +236,9 @@ export default function Play() {
             </Form>
           </div>
           <Grid>
-            {resolvedGuesses.map(({ letter, status }, index) => (
-              <Tile key={`${index}-${letter}`} status={status}>
-                {letter.toUpperCase()}
-              </Tile>
+            {gridItems.map(({ letter, status }) => (
+              <Tile status={status}>{letter.toUpperCase()}</Tile>
             ))}
-            {input.split("").map((letter, index) => (
-              <Tile key={`${index}-${letter}`}>{letter.toUpperCase()}</Tile>
-            ))}
-            {new Array(Math.max(0, 30 - input.length - resolvedGuesses.length))
-              .fill("")
-              .map((_, index) => (
-                <Tile key={index}>&nbsp;</Tile>
-              ))}
           </Grid>
           {status === "error" && (
             <div className="mt-8">
