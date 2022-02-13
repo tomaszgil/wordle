@@ -6,6 +6,7 @@ import {
   useLoaderData,
   Form,
   useActionData,
+  useTransition,
 } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import type {
@@ -20,7 +21,6 @@ import { getRandomWord, inWordList } from "~/words";
 import { DismissableAlert } from "~/components/DismissableAlert";
 import { Button } from "~/components/Button";
 import { Mark } from "~/components/Mark";
-import { Logo } from "~/components/Logo";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -149,12 +149,17 @@ export default function Play() {
     status: GameStatus;
   }>();
   const actionData = useActionData();
+  const transition = useTransition();
   const resolvedGuesses = data?.guesses?.flat() ?? [];
 
   const [input, setInput] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const status = actionData?.error ? "error" : "idle";
+  const status = transition.submission
+    ? "loading"
+    : actionData?.error
+    ? "error"
+    : "idle";
 
   React.useEffect(() => {
     if (inputRef.current) {
@@ -180,7 +185,11 @@ export default function Play() {
           }
         }}
       >
-        <fieldset disabled={["win", "loss"].includes(data?.status)}>
+        <fieldset
+          disabled={
+            status === "loading" || ["win", "loss"].includes(data?.status)
+          }
+        >
           <label>
             Guess:
             <input
@@ -210,7 +219,7 @@ export default function Play() {
                 type="submit"
                 variant="secondary"
                 name="_action"
-                disabled={!resolvedGuesses.length}
+                disabled={status === "loading" || !resolvedGuesses.length}
                 value="reset"
               >
                 Reset
@@ -234,7 +243,7 @@ export default function Play() {
           </Grid>
           {status === "error" && (
             <div className="mt-8">
-              <DismissableAlert status="error">
+              <DismissableAlert status="error" key={actionData.error}>
                 {actionData.error}
               </DismissableAlert>
             </div>

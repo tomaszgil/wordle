@@ -10,7 +10,7 @@ export default function Index() {
           <Illustration />
         </div>
         <p className="text-4xl font-bold leading-none mb-12 max-w-lg">
-          Your favourite word game. Expect now you can just{" "}
+          Your favourite word game. Except now you can just{" "}
           <span className="text-sky-400">keep playing</span>.
         </p>
         <Link to="/play" className={buttonStyles({ size: "lg" })}>
