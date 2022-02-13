@@ -1,14 +1,22 @@
 import { Link } from "remix";
-import { Button } from "~/components/Button";
-import { Logo } from "~/components/Logo";
+import { styles as buttonStyles } from "~/components/Button";
+import { Illustration } from "~/components/Illustration";
 
 export default function Index() {
   return (
-    <>
-      <h1 className="mb-4">
-        <Logo size="lg" />
-      </h1>
-      <Link to="/play">Play</Link>
-    </>
+    <main className="text-center flex justify-center">
+      <div>
+        <div className="mt-16 mb-12">
+          <Illustration />
+        </div>
+        <p className="text-4xl font-bold leading-none mb-12 max-w-lg">
+          Your favourite word game. Expect now you can just{" "}
+          <span className="text-sky-400">keep playing</span>.
+        </p>
+        <Link to="/play" className={buttonStyles({ size: "lg" })}>
+          Let's play!
+        </Link>
+      </div>
+    </main>
   );
 }
