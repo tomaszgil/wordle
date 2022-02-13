@@ -5,11 +5,13 @@ import { LetterStatus } from "~/types";
 interface TileProps {
   children?: React.ReactNode;
   status?: LetterStatus;
+  delay?: number;
 }
 
-export function Tile({ children, status }: TileProps) {
+export function Tile({ children, status, delay = 0 }: TileProps) {
   return (
     <div
+      style={{ transitionDelay: `${delay}ms` }}
       className={classNames(
         "w-16 h-16 text-xl font-bold rounded-md flex items-center justify-center transition-colors ease-out",
         {
