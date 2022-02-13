@@ -20,6 +20,7 @@ import { getRandomWord, inWordList } from "~/words";
 import { DismissableAlert } from "~/components/DismissableAlert";
 import { Button } from "~/components/Button";
 import { Mark } from "~/components/Mark";
+import { Logo } from "~/components/Logo";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -168,7 +169,7 @@ export default function Play() {
   }, [data?.guesses.length]);
 
   return (
-    <div className="my-8 mx-4">
+    <main className="my-8 mx-4">
       <Form
         method="post"
         autoComplete="off"
@@ -241,6 +242,6 @@ export default function Play() {
         </div>
       </div>
       <Outlet />
-    </div>
+    </main>
   );
 }

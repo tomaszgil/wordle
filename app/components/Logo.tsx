@@ -14,7 +14,7 @@ export function Logo({ size = "sm" }: LogoProps) {
         "text-4xl": size === "lg",
       })}
     >
-      <span className="text-cyan-400 text-[0.875em] uppercase font-bold leading-none">
+      <span className="text-sky-400 text-[0.875em] uppercase font-bold leading-none">
         Infinite
       </span>
       <span className="text-[1.125em] uppercase font-bold leading-none">

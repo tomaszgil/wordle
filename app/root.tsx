@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LinksFunction,
   LiveReload,
@@ -9,6 +10,7 @@ import {
 } from "remix";
 import type { MetaFunction } from "remix";
 import styles from "./tailwind.css";
+import { Logo } from "./components/Logo";
 
 export const meta: MetaFunction = () => {
   return { title: "Wordle" };
@@ -28,6 +30,11 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <header className="flex justify-center border-b-2 border-gray-100 p-4">
+          <Link to="/">
+            <Logo size="md" />
+          </Link>
+        </header>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
