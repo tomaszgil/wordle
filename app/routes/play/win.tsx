@@ -50,7 +50,7 @@ export default function Win() {
         <h2 className="text-3xl mb-4 font-semibold">Congratulations!</h2>
         <p className="max-w-lg mb-6">
           That was very impressive - you guessed <Mark>{word}</Mark> right.
-          Typically you wouldn't be able to play again. Here you can acutally do
+          Typically you wouldn't be able to play again. Here you can actually do
           that!
         </p>
         <form method="post">
