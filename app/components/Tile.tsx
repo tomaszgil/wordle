@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import classNames from "classnames";
 import { LetterStatus } from "~/types";
 
 interface TileProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   status?: LetterStatus;
   delay?: number;
 }

@@ -1,5 +1,7 @@
+import { ReactNode } from "react";
+
 interface GridProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function Grid({ children }: GridProps) {

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
   json,
   Outlet,
@@ -152,8 +153,8 @@ export default function Play() {
   const transition = useTransition();
   const resolvedGuesses = data?.guesses?.flat() ?? [];
 
-  const [input, setInput] = React.useState("");
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const status = transition.submission
     ? "loading"
@@ -161,13 +162,13 @@ export default function Play() {
     ? "error"
     : "idle";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (inputRef.current) {
       setInput("");
     }
