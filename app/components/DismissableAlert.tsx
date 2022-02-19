@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { ReactNode, useState } from "react";
+import { IconType } from "react-icons";
 import {
   MdError,
   MdCheckCircle,
@@ -8,12 +9,14 @@ import {
   MdClose,
 } from "react-icons/md";
 
+type DialogStatus = "success" | "warning" | "error" | "info";
+
 interface DialogProps {
-  status: "success" | "warning" | "error" | "info";
+  status: DialogStatus;
   children: ReactNode;
 }
 
-const statusToIcon = {
+const statusToIcon: Record<DialogStatus, IconType> = {
   success: MdCheckCircle,
   error: MdError,
   warning: MdWarning,
