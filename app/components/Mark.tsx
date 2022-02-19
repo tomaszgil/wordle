@@ -1,5 +1,7 @@
+import { ReactNode } from "react";
+
 interface MarkProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export function Mark({ children }: MarkProps) {
