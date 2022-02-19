@@ -1,5 +1,3 @@
-import React from "react";
-
 interface MarkProps {
   children?: React.ReactNode;
 }

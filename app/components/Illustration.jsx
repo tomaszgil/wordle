@@ -1,4 +1,3 @@
-import React from "react";
 import { Grid } from "~/components/Grid";
 import { Tile } from "~/components/Tile";
 

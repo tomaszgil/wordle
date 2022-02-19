@@ -1,4 +1,4 @@
-import React, { HTMLProps } from "react";
+import { HTMLProps } from "react";
 import classNames from "classnames";
 
 type Variant = "primary" | "secondary";
