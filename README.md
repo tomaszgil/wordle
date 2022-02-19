@@ -1,6 +1,14 @@
-# Welcome to Remix!
+# Infinite Worlde
 
-- [Remix Docs](https://remix.run/docs)
+This is a clone of [Worlde](https://www.nytimes.com/games/wordle/index.html), a popular word game.
+The purpose of this application is solely educational.
+
+## Technologies
+
+The project was bootstrapped with [`create-remix`](https://www.npmjs.com/package/create-remix).
+
+- Framework: [Remix](https://remix.run/docs)
+- Styling: [Tailwind](https://tailwindcss.com/)
 
 ## Development
 
@@ -27,27 +35,3 @@ npm start
 ```
 
 Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
-
-### Using a Template
-
-When you ran `npx create-remix@latest` there were a few choices for hosting. You can run that again to create a new project, then copy over your `app/` folder to the new project that's pre-configured for your target server.
-
-```sh
-cd ..
-# create a new project, and pick a pre-configured host
-npx create-remix@latest
-cd my-new-remix-app
-# remove the new project's app (not the old one!)
-rm -rf app
-# copy your app over
-cp -R ../my-old-remix-app/app app
-```
