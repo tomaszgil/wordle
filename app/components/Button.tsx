@@ -4,7 +4,7 @@ import classNames from "classnames";
 type Variant = "primary" | "secondary";
 type Size = "md" | "lg";
 
-interface ButtonProps {
+interface ButtonProps extends HTMLProps<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
   type?: "button" | "submit" | "reset";
@@ -43,7 +43,7 @@ export function Button({
   onClick,
   disabled,
   ...props
-}: ButtonProps & HTMLProps<HTMLButtonElement>) {
+}: ButtonProps) {
   return (
     <button
       className={styles({ variant, disabled, size })}
