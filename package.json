@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "remix-app-template",
-  "description": "",
-  "license": "",
+  "name": "infinite-worlde",
+  "description": "Clone of Worlde, a popular word game, solely for educational purposes",
+  "license": "MIT",
   "scripts": {
     "build": "npm run build:css && remix build",
     "build:css": "tailwindcss -o ./app/tailwind.css",
