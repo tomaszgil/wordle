@@ -9,12 +9,7 @@ import {
   useTransition,
 } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
-import type {
-  GameStatus,
-  LetterGuess,
-  ResolvedWordGuess,
-  ResolvedWordGuesses,
-} from "~/types";
+import type { GameStatus, LetterGuess, ResolvedWordGuess } from "~/types";
 import { Tile } from "~/components/Tile";
 import { Grid } from "~/components/Grid";
 import { getSession, commitSession, destroySession } from "~/sessions";
@@ -22,6 +17,7 @@ import { getRandomWord, inWordList } from "~/words";
 import { DismissableAlert } from "~/components/DismissableAlert";
 import { Button } from "~/components/Button";
 import { Mark } from "~/components/Mark";
+import { checkGuess, isLoss, isWin } from "~/game";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -95,40 +91,20 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const word = session.get("word").split("");
-  const result: ResolvedWordGuess = guess.split("").map((letter: string) => ({
-    letter,
-    status: "miss",
-  }));
+  const previousGuesses = session.get("guesses");
+  const result = checkGuess(guess, session.get("word"));
 
-  // Check for matches
-  for (let i = 0; i < guess.length; i++) {
-    if (word[i] === guess[i]) {
-      result[i].status = "match";
-      word[i] = undefined;
-    }
-  }
-
-  // Check for includes
-  for (let i = 0; i < guess.length; i++) {
-    if (word.includes(guess[i])) {
-      result[i].status = "include";
-      const index = word.findIndex((l: string) => l === guess[i]);
-      word[index] = undefined;
-    }
-  }
-
-  const previousGuesses = session.get("guesses") ?? [];
   session.set("guesses", [...previousGuesses, result]);
 
-  if (result.every(({ status }) => status === "match")) {
+  if (isWin(result)) {
     session.set("status", "win");
     return redirect("/play/win", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
     });
-  } else if (previousGuesses.length === 5) {
+  }
+  if (isLoss(previousGuesses)) {
     session.set("status", "loss");
     return redirect("/play/loss", {
       headers: {
@@ -146,7 +122,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Play() {
   const data = useLoaderData<{
-    guesses: ResolvedWordGuesses;
+    guesses: ResolvedWordGuess[];
     status: GameStatus;
   }>();
   const actionData = useActionData();
