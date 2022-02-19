@@ -8,21 +8,21 @@ export function checkGuess(guess: string, reference: string) {
   }));
 
   // Check for matches
-  for (let i = 0; i < guess.length; i++) {
-    if (word[i] === guess[i]) {
+  guess.split("").forEach((letter, i) => {
+    if (word[i] === letter) {
       result[i].status = "match";
       word[i] = "";
     }
-  }
+  });
 
   // Check for includes
-  for (let i = 0; i < guess.length; i++) {
-    if (result[i].status === "miss" && word.includes(guess[i])) {
+  guess.split("").forEach((letter, i) => {
+    if (result[i].status === "miss" && word.includes(letter)) {
       result[i].status = "include";
-      const index = word.findIndex((l: string) => l === guess[i]);
+      const index = word.findIndex((l: string) => l === letter);
       word[index] = "";
     }
-  }
+  });
 
   return result;
 }
