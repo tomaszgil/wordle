@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import { useRef, ReactNode } from "react";
 import { useKeyDown } from "~/hooks/useKeyDown";
 import { useOutsideClick } from "~/hooks/useOutsideClick";
 
 interface DialogProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onClose: () => void;
 }
 

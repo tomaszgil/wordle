@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   MdError,
   MdCheckCircle,
@@ -10,7 +10,7 @@ import {
 
 interface DialogProps {
   status: "success" | "warning" | "error" | "info";
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const statusToIcon = {

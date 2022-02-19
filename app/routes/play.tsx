@@ -1,4 +1,3 @@
-import React from "react";
 import {
   json,
   Outlet,
@@ -189,7 +188,7 @@ export default function Play() {
         autoComplete="off"
         className="h-0 overflow-hidden"
         onSubmit={(e) => {
-          if (inputRef.current?.value.length === 0) {
+          if (input.length === 0) {
             e.preventDefault();
           }
         }}
