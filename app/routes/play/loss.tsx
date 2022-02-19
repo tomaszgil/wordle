@@ -50,7 +50,7 @@ export default function Loss() {
         <h2 className="text-3xl mb-4 font-semibold">Ooops...</h2>
         <p className="max-w-lg mb-6">
           That was hard - it was <Mark>{word}</Mark> you were looking for.
-          Typically you wouldn't be able to play again. Here you can acutally
+          Typically you wouldn't be able to play again. Here you can actually
           try again!
         </p>
         <form method="post">
