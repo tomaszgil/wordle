@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   json,
   Outlet,
   redirect,
   useLoaderData,
-  Form,
   useActionData,
   useTransition,
 } from "remix";
@@ -15,9 +14,10 @@ import { Grid } from "~/components/Grid";
 import { getSession, commitSession, destroySession } from "~/sessions";
 import { getRandomWord, inWordList } from "~/words";
 import { DismissableAlert } from "~/components/DismissableAlert";
-import { Button } from "~/components/Button";
 import { Mark } from "~/components/Mark";
 import { checkGuess, isLoss, isWin } from "~/game";
+import { ResetForm } from "~/components/form/ResetForm";
+import { InputForm } from "~/components/form/InputForm";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
@@ -130,7 +130,6 @@ export default function Play() {
   const resolvedGuesses = data?.guesses?.flat() ?? [];
 
   const [input, setInput] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const status = transition.submission
     ? "loading"
@@ -139,15 +138,7 @@ export default function Play() {
     : "idle";
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  });
-
-  useEffect(() => {
-    if (inputRef.current) {
-      setInput("");
-    }
+    setInput("");
   }, [data?.guesses.length]);
 
   const gridItems: LetterGuess[] = [
@@ -160,56 +151,22 @@ export default function Play() {
 
   return (
     <main className="my-8 mx-4">
-      <Form
-        method="post"
-        autoComplete="off"
-        className="h-0 overflow-hidden"
-        onSubmit={(e) => {
-          if (input.length === 0) {
-            e.preventDefault();
-          }
-        }}
-      >
-        <fieldset
-          disabled={
-            status === "loading" || ["win", "loss"].includes(data?.status)
-          }
-        >
-          <label>
-            Guess:
-            <input
-              ref={inputRef}
-              type="text"
-              name="word"
-              value={input}
-              maxLength={5}
-              onBlur={() => {
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                }
-              }}
-              onChange={(e) => setInput(e.target.value.toLowerCase())}
-            />
-          </label>
-        </fieldset>
-      </Form>
+      <InputForm
+        input={input}
+        setInput={setInput}
+        disabled={
+          status === "loading" || ["win", "loss"].includes(data?.status)
+        }
+      />
       <div className="flex justify-center">
         <div>
           <div className="mb-8 flex items-center gap-4 justify-between">
             <span>
               Press <Mark>Enter</Mark> to submit...
             </span>
-            <Form method="post">
-              <Button
-                type="submit"
-                variant="secondary"
-                name="_action"
-                disabled={status === "loading" || !resolvedGuesses.length}
-                value="reset"
-              >
-                Reset
-              </Button>
-            </Form>
+            <ResetForm
+              disabled={status === "loading" || !resolvedGuesses.length}
+            />
           </div>
           <Grid>
             {gridItems.map(({ letter, status }, index) => (
