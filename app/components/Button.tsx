@@ -20,7 +20,7 @@ export const styles = ({
   variant = "primary",
   size = "md",
   disabled = false,
-}: ButtonStyles) =>
+}: ButtonStyles = {}) =>
   classNames(
     "inline-block rounded-lg transition-colors leading-tight",
     {
