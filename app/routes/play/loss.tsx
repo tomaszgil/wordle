@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   json,
   LoaderFunction,
@@ -42,9 +43,10 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Loss() {
   const { word } = useLoaderData<{ word: string }>();
   const navigate = useNavigate();
+  const onClose = useCallback(() => navigate("/play"), []);
 
   return (
-    <Dialog onClose={() => navigate("/play")}>
+    <Dialog onClose={onClose}>
       <div className="text-center">
         <div className="text-8xl mb-4">🥺</div>
         <h2 className="text-3xl mb-4 font-semibold">Ooops...</h2>
