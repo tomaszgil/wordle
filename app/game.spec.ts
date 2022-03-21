@@ -1,4 +1,4 @@
-import { checkGuess, isWin, isLoss } from "./game";
+import { checkGuess, isWin, isEnd } from "./game";
 import { ResolvedWordGuess } from "./types";
 
 describe("checkGuess", () => {
@@ -92,7 +92,7 @@ describe("isWin", () => {
   });
 });
 
-describe("isLoss", () => {
+describe("isEnd", () => {
   const guess: ResolvedWordGuess = [
     { letter: "a", status: "miss" },
     { letter: "a", status: "miss" },
@@ -109,6 +109,6 @@ describe("isLoss", () => {
     ["for 4 previous guesses", false, [guess, guess, guess, guess]],
     ["for 5 previous guesses", true, [guess, guess, guess, guess, guess]],
   ])("%s returns %s", (_, expected, guesses) => {
-    expect(isLoss(guesses)).toBe(expected);
+    expect(isEnd(guesses)).toBe(expected);
   });
 });

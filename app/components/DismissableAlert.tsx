@@ -11,7 +11,7 @@ import {
 
 type DialogStatus = "success" | "warning" | "error" | "info";
 
-interface DialogProps {
+interface AlertProps {
   status: DialogStatus;
   children: ReactNode;
 }
@@ -23,7 +23,7 @@ const statusToIcon: Record<DialogStatus, IconType> = {
   info: MdInfo,
 };
 
-export function DismissableAlert({ status = "info", children }: DialogProps) {
+export function DismissableAlert({ status = "info", children }: AlertProps) {
   const [open, setOpen] = useState(true);
   const Icon = statusToIcon[status];
 

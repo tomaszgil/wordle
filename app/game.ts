@@ -31,6 +31,6 @@ export function isWin(result: ResolvedWordGuess) {
   return result.every(({ status }) => status === "match");
 }
 
-export function isLoss(previousGuesses: ResolvedWordGuess[]) {
+export function isEnd(previousGuesses: ResolvedWordGuess[]) {
   return previousGuesses.length === 5;
 }

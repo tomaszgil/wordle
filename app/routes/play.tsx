@@ -15,7 +15,7 @@ import { getSession, commitSession, destroySession } from "~/sessions";
 import { getRandomWord, inWordList } from "~/words";
 import { DismissableAlert } from "~/components/DismissableAlert";
 import { Mark } from "~/components/Mark";
-import { checkGuess, isLoss, isWin } from "~/game";
+import { checkGuess, isEnd, isWin } from "~/game";
 import { ResetForm } from "~/components/form/ResetForm";
 import { InputForm } from "~/components/form/InputForm";
 
@@ -104,7 +104,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   }
-  if (isLoss(previousGuesses)) {
+  if (isEnd(previousGuesses)) {
     session.set("status", "loss");
     return redirect("/play/loss", {
       headers: {
