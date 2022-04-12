@@ -1,5 +1,11 @@
-import { Link } from "remix";
+import { Link, LoaderFunction } from "remix";
 import { styles as buttonStyles } from "~/components/Button";
+
+export const loader: LoaderFunction = async () => {
+  return new Response("Not Found", {
+    status: 404,
+  });
+};
 
 export default function Fallback() {
   return (
