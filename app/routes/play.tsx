@@ -6,6 +6,7 @@ import {
   useLoaderData,
   useActionData,
   useTransition,
+  ErrorBoundaryComponent,
 } from "remix";
 import type { ActionFunction, LoaderFunction } from "remix";
 import type { GameStatus, LetterGuess, ResolvedWordGuess } from "~/types";
@@ -188,3 +189,16 @@ export default function Play() {
     </main>
   );
 }
+
+export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
+  console.error(error);
+  return (
+    <main className="p-12">
+      <div role="alert" className="rounded-md p-4 bg-red-100 ">
+        <h2 className="font-bold text-lg">Oh no!</h2>
+        <p>Something went wrong in the browser.</p>
+        <pre className="mt-4">{error.message}</pre>
+      </div>
+    </main>
+  );
+};
